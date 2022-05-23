@@ -128,7 +128,10 @@ func (g *Game) mark(player *cg.Player, event cg.Event) {
 	}
 
 	g.board[data.Row][data.Column].Sign = sign
-	g.turn()
+
+	if !g.checkDone() {
+		g.turn()
+	}
 }
 
 func (g *Game) start() {
@@ -157,4 +160,54 @@ func (g *Game) sendBoard() {
 	g.cg.Send("server", EventBoard, EventBoardData{
 		Board: g.board,
 	})
+}
+
+func (g *Game) checkDone() bool {
+	for i := 0; i < 3; i++ {
+		if g.board[i][0].Sign != SignNone && g.board[i][0].Sign == g.board[i][1].Sign && g.board[i][1].Sign == g.board[i][2].Sign {
+			g.gameOver(false, []Field{g.board[i][0], g.board[i][1], g.board[i][2]})
+			return true
+		}
+
+		if g.board[0][i].Sign != SignNone && g.board[0][i].Sign == g.board[1][i].Sign && g.board[1][i].Sign == g.board[2][i].Sign {
+			g.gameOver(false, []Field{g.board[0][i], g.board[1][i], g.board[2][i]})
+			return true
+		}
+	}
+
+	if g.board[0][0].Sign != SignNone && g.board[0][0].Sign == g.board[1][1].Sign && g.board[1][1].Sign == g.board[2][2].Sign {
+		g.gameOver(false, []Field{g.board[0][0], g.board[1][1], g.board[2][2]})
+		return true
+	}
+
+	if g.board[0][2].Sign != SignNone && g.board[0][2].Sign == g.board[1][1].Sign && g.board[1][1].Sign == g.board[2][0].Sign {
+		g.gameOver(false, []Field{g.board[0][0], g.board[1][1], g.board[2][2]})
+		return true
+	}
+
+	for row := range g.board {
+		for column := range g.board[row] {
+			if g.board[row][column].Sign == SignNone {
+				return false
+			}
+		}
+	}
+
+	g.gameOver(true, nil)
+	return true
+}
+
+func (g *Game) gameOver(tie bool, fields []Field) {
+	if tie {
+		g.cg.Send("server", EventGameOver, EventGameOverData{
+			Tie: true,
+		})
+	} else {
+		g.cg.Send("server", EventGameOver, EventGameOverData{
+			WinnerSign: fields[0].Sign,
+			WinningRow: fields,
+		})
+	}
+
+	g.cg.Close()
 }
