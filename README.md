@@ -19,6 +19,18 @@ tic-tac-toe-simple --port 8080
 CG_PORT=8080 pong
 ```
 
+## Building
+
+### Prerequisites
+
+- [Go](https://go.dev) 1.18+
+
+```sh
+git clone https://github.com/code-game-project/tic-tac-toe-simple.git
+cd tic-tac-toe-simple
+go build .
+```
+
 ## License
 
 Copyright (C) 2022 Julian Hofmann
