@@ -1,0 +1,54 @@
+name tic_tac_toe_simple
+version 0.3
+
+// The two possible signs which can be placed on the board.
+enum sign {
+	x, o
+}
+
+// One of the nine fields on the board.
+type field {
+	row: int,
+	column: int,
+	sign: sign
+}
+
+// The 'start' event is sent to all players when the game starts.
+event start {
+	// A map of player IDs mapped to their respective signs.
+	signs: map<sign>,
+}
+
+// The 'mark' event can be sent to the server to mark a field with the player's sign.
+event mark {
+	row: int,
+	column: int
+}
+
+// The 'board' event is sent to all players when the board changes.
+event board {
+	// The board as rows of columns.
+	board: list<list<field>>
+}
+
+// The 'field_occupied' event notifies the player that the fields they tried to mark is already occupied.
+event field_occupied {
+	// The field, which is already occupied.
+	field: field
+}
+
+// The 'turn' event is sent to all players when it is the next player's turn.
+event turn {
+	// The sign of the player whose turn it is now.
+	sign: sign
+}
+
+// The 'game_over' event is sent to all players when it's a tie or a player has won.
+event game_over {
+	// Whether it's a tie.
+	tie: bool,
+	// The sign of the winner.
+	winner_sign: sign,
+	// The three fields which form a row.
+	winning_row: list<field>
+}
