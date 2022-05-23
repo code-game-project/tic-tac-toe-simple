@@ -3,7 +3,7 @@ version 0.3
 
 // The two possible signs which can be placed on the board.
 enum sign {
-	x, o
+	none, x, o
 }
 
 // One of the nine fields on the board.
@@ -31,10 +31,10 @@ event board {
 	board: list<list<field>>
 }
 
-// The 'field_occupied' event notifies the player that the fields they tried to mark is already occupied.
-event field_occupied {
-	// The field, which is already occupied.
-	field: field
+// The 'invalid_action' event notifies the player that their action was not allowed.
+event invalid_action {
+	// A message containing details on what the player did wrong.
+	message: string
 }
 
 // The 'turn' event is sent to all players when it is the next player's turn.

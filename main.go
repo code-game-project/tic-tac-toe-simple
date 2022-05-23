@@ -5,11 +5,14 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/Bananenpro/log"
 	"github.com/code-game-project/go-server/cg"
+	"github.com/code-game-project/tic-tac-toe-simple/tictactoe"
 	"github.com/ogier/pflag"
 )
 
 func main() {
+	log.SetSeverity(log.TRACE)
 	var port int
 	pflag.IntVarP(&port, "port", "p", 0, "The network port of the game server.")
 	pflag.Parse()
@@ -38,5 +41,6 @@ func main() {
 	})
 
 	server.Run(func(game *cg.Game) {
+		tictactoe.NewGame(game).Run()
 	})
 }
