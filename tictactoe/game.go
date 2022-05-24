@@ -65,6 +65,10 @@ func (g *Game) onPlayerLeft(player *cg.Player) {
 }
 
 func (g *Game) onPlayerSocketConnected(player *cg.Player, socket *cg.Socket) {
+	if g.crossPlayer == nil || g.circlePlayer == nil {
+		return
+	}
+
 	socket.Send("server", EventStart, EventStartData{
 		Signs: map[string]Sign{
 			g.crossPlayer.Id:  SignX,
