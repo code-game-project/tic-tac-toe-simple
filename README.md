@@ -14,7 +14,7 @@ This game is ideal for familiarizing yourself with CodeGame.
 tic-tac-toe-simple
 
 # Specify a custom port
-tic-tac-toe-simple --port 8080
+tic-tac-toe-simple --port=8080
 
 ## Specify a custom port through an environment variable
 CG_PORT=8080 pong
