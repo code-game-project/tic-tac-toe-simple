@@ -3,9 +3,13 @@
 ![CodeGame GameServer Version](https://img.shields.io/badge/GameServer-v0.1-yellow)
 ![CGE Version](https://img.shields.io/badge/CGE-v0.3-green)
 
-A simple implementation of [tic-tac-toe](https://en.wikipedia.org/wiki/Tic-tac-toe) for [CodeGame](https://github.com/code-game-project).
+A simple implementation of [tic-tac-toe](https://en.wikipedia.org/wiki/Tic-tac-toe) for [CodeGame](https://code-game.org).
 
 This game is ideal for familiarizing yourself with CodeGame.
+
+## Known instances
+
+- `games.code-game.org/tic-tac-toe-simple`
 
 ## Usage
 
