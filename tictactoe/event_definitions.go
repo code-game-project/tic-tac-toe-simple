@@ -19,49 +19,49 @@ type Field struct {
 }
 
 // The 'start' event is sent to all players when the game starts.
-const EventStart cg.EventName = "start"
+const StartEvent cg.EventName = "start"
 
-type EventStartData struct {
+type StartEventData struct {
 	// A map of player IDs mapped to their respective signs.
 	Signs map[string]Sign `json:"signs"`
 }
 
 // The 'mark' event can be sent to the server to mark a field with the player's sign.
-const EventMark cg.EventName = "mark"
+const MarkEvent cg.EventName = "mark"
 
-type EventMarkData struct {
+type MarkEventData struct {
 	Row    int `json:"row"`
 	Column int `json:"column"`
 }
 
 // The 'board' event is sent to all players when the board changes.
-const EventBoard cg.EventName = "board"
+const BoardEvent cg.EventName = "board"
 
-type EventBoardData struct {
+type BoardEventData struct {
 	// The board as rows of columns.
 	Board [][]Field `json:"board"`
 }
 
 // The 'invalid_action' event notifies the player that their action was not allowed.
-const EventInvalidAction cg.EventName = "invalid_action"
+const InvalidActionEvent cg.EventName = "invalid_action"
 
-type EventInvalidActionData struct {
+type InvalidActionEventData struct {
 	// A message containing details on what the player did wrong.
 	Message string `json:"message"`
 }
 
 // The 'turn' event is sent to all players when it is the next player's turn.
-const EventTurn cg.EventName = "turn"
+const TurnEvent cg.EventName = "turn"
 
-type EventTurnData struct {
+type TurnEventData struct {
 	// The sign of the player whose turn it is now.
 	Sign Sign `json:"sign"`
 }
 
 // The 'game_over' event is sent to all players when it's a tie or a player has won.
-const EventGameOver cg.EventName = "game_over"
+const GameOverEvent cg.EventName = "game_over"
 
-type EventGameOverData struct {
+type GameOverEventData struct {
 	// Whether it's a tie.
 	Tie bool `json:"tie"`
 	// The sign of the winner.

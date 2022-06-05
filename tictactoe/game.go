@@ -69,28 +69,28 @@ func (g *Game) onPlayerSocketConnected(player *cg.Player, socket *cg.Socket) {
 		return
 	}
 
-	socket.Send("server", EventStart, EventStartData{
+	socket.Send("server", StartEvent, StartEventData{
 		Signs: map[string]Sign{
 			g.crossPlayer.Id:  SignX,
 			g.circlePlayer.Id: SignO,
 		},
 	})
 
-	socket.Send("server", EventBoard, EventBoardData{
+	socket.Send("server", BoardEvent, BoardEventData{
 		Board: g.board,
 	})
 
-	socket.Send("server", EventTurn, EventTurnData{
+	socket.Send("server", TurnEvent, TurnEventData{
 		Sign: g.currentTurn,
 	})
 }
 
 func (g *Game) handleEvent(player *cg.Player, event cg.Event) {
 	switch event.Name {
-	case EventMark:
+	case MarkEvent:
 		g.mark(player, event)
 	default:
-		player.Send(player.Id, cg.EventError, cg.EventErrorData{
+		player.Send(player.Id, cg.ErrorEvent, cg.ErrorEventData{
 			Message: fmt.Sprintf("unexpected event: %s", event.Name),
 		})
 	}
@@ -98,29 +98,29 @@ func (g *Game) handleEvent(player *cg.Player, event cg.Event) {
 
 func (g *Game) mark(player *cg.Player, event cg.Event) {
 	if (g.currentTurn == SignX && player != g.crossPlayer) || (g.currentTurn == SignO && player != g.circlePlayer) {
-		player.Send("server", EventInvalidAction, EventInvalidActionData{
+		player.Send("server", InvalidActionEvent, InvalidActionEventData{
 			Message: "It is not your turn.",
 		})
 		return
 	}
 
-	var data EventMarkData
+	var data MarkEventData
 	err := event.UnmarshalData(&data)
 	if err != nil {
-		player.Send("server", cg.EventError, cg.EventErrorData{
+		player.Send("server", cg.ErrorEvent, cg.ErrorEventData{
 			Message: "invalid event data",
 		})
 		return
 	}
 	if data.Row < 0 || data.Row > 2 || data.Column < 0 || data.Column > 2 {
-		player.Send("server", EventInvalidAction, EventInvalidActionData{
+		player.Send("server", InvalidActionEvent, InvalidActionEventData{
 			Message: "Invalid coordinates.",
 		})
 		return
 	}
 
 	if g.board[data.Row][data.Column].Sign != SignNone {
-		player.Send("server", EventInvalidAction, EventInvalidActionData{
+		player.Send("server", InvalidActionEvent, InvalidActionEventData{
 			Message: "The field is alread occupied.",
 		})
 		return
@@ -139,7 +139,7 @@ func (g *Game) mark(player *cg.Player, event cg.Event) {
 }
 
 func (g *Game) start() {
-	g.cg.Send("server", EventStart, EventStartData{
+	g.cg.Send("server", StartEvent, StartEventData{
 		Signs: map[string]Sign{
 			g.crossPlayer.Id:  SignX,
 			g.circlePlayer.Id: SignO,
@@ -155,13 +155,13 @@ func (g *Game) turn() {
 	} else {
 		g.currentTurn = SignX
 	}
-	g.cg.Send("server", EventTurn, EventTurnData{
+	g.cg.Send("server", TurnEvent, TurnEventData{
 		Sign: g.currentTurn,
 	})
 }
 
 func (g *Game) sendBoard() {
-	g.cg.Send("server", EventBoard, EventBoardData{
+	g.cg.Send("server", BoardEvent, BoardEventData{
 		Board: g.board,
 	})
 }
@@ -203,11 +203,11 @@ func (g *Game) checkDone() bool {
 
 func (g *Game) gameOver(tie bool, fields []Field) {
 	if tie {
-		g.cg.Send("server", EventGameOver, EventGameOverData{
+		g.cg.Send("server", GameOverEvent, GameOverEventData{
 			Tie: true,
 		})
 	} else {
-		g.cg.Send("server", EventGameOver, EventGameOverData{
+		g.cg.Send("server", GameOverEvent, GameOverEventData{
 			WinnerSign: fields[0].Sign,
 			WinningRow: fields,
 		})
