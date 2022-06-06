@@ -24,6 +24,19 @@ tic-tac-toe-simple --port=8080
 CG_PORT=8080 tic-tac-toe-simple
 ```
 
+### Running with Docker
+
+Prerequisites:
+- [Docker](https://docker.com/)
+
+```sh
+# Download image
+docker pull codegameproject/tic-tac-toe-simple:0.1
+
+# Run container
+docker run -d -p <port-on-host-machine>:8080 --name tic-tac-toe-simple codegameproject/tic-tac-toe-simple:0.1
+```
+
 ## Event Flow
 
 1. You receive a `start` event when a second player joins, which includes your sign ('x' or 'o').
