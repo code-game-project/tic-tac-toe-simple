@@ -21,7 +21,7 @@ tic-tac-toe-simple
 tic-tac-toe-simple --port=8080
 
 ## Specify a custom port through an environment variable
-CG_PORT=8080 pong
+CG_PORT=8080 tic-tac-toe-simple
 ```
 
 ## Event Flow
