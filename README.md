@@ -31,10 +31,10 @@ Prerequisites:
 
 ```sh
 # Download image
-docker pull codegameproject/tic-tac-toe-simple:0.1
+docker pull codegameproject/tic-tac-toe-simple:0.2
 
 # Run container
-docker run -d -p <port-on-host-machine>:8080 --name tic-tac-toe-simple codegameproject/tic-tac-toe-simple:0.1
+docker run -d -p <port-on-host-machine>:8080 --name tic-tac-toe-simple codegameproject/tic-tac-toe-simple:0.2
 ```
 
 ## Event Flow
