@@ -133,6 +133,7 @@ func (g *Game) mark(player *cg.Player, event cg.Event) {
 
 	g.board[data.Row][data.Column].Sign = sign
 
+	g.sendBoard()
 	if !g.checkDone() {
 		g.turn()
 	}
@@ -145,11 +146,11 @@ func (g *Game) start() {
 			g.circlePlayer.Id: SignO,
 		},
 	})
+	g.sendBoard()
 	g.turn()
 }
 
 func (g *Game) turn() {
-	g.sendBoard()
 	if g.currentTurn == SignX {
 		g.currentTurn = SignO
 	} else {
