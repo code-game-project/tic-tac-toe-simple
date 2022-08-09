@@ -13,14 +13,14 @@ This game is ideal for familiarizing yourself with CodeGame.
 ## Usage
 
 ```sh
-# Run on default port 80
+# Run on default port 8080
 tic-tac-toe-simple
 
 # Specify a custom port
-tic-tac-toe-simple --port=8080
+tic-tac-toe-simple --port=5000
 
 ## Specify a custom port through an environment variable
-CG_PORT=8080 tic-tac-toe-simple
+CG_PORT=5000 tic-tac-toe-simple
 ```
 
 ### Running with Docker
