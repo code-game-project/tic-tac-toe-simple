@@ -1,21 +1,13 @@
-package tictactoe
+package tictactoesimple
 
 import "github.com/code-game-project/go-server/cg"
 
-// The two possible signs which can be placed on the board.
-type Sign string
+// The 'mark' command can be sent to the server to mark a field with the player's sign.
+const MarkCmd cg.CommandName = "mark"
 
-const (
-	SignNone Sign = "none"
-	SignX    Sign = "x"
-	SignO    Sign = "o"
-)
-
-// One of the nine fields on the board.
-type Field struct {
-	Row    int  `json:"row"`
-	Column int  `json:"column"`
-	Sign   Sign `json:"sign"`
+type MarkCmdData struct {
+	Row    int `json:"row"`
+	Column int `json:"column"`
 }
 
 // The 'start' event is sent to all players when the game starts.
@@ -24,14 +16,6 @@ const StartEvent cg.EventName = "start"
 type StartEventData struct {
 	// A map of player IDs mapped to their respective signs.
 	Signs map[string]Sign `json:"signs"`
-}
-
-// The 'mark' event can be sent to the server to mark a field with the player's sign.
-const MarkEvent cg.EventName = "mark"
-
-type MarkEventData struct {
-	Row    int `json:"row"`
-	Column int `json:"column"`
 }
 
 // The 'board' event is sent to all players when the board changes.
@@ -68,4 +52,23 @@ type GameOverEventData struct {
 	WinnerSign Sign `json:"winner_sign"`
 	// The three fields which form a row.
 	WinningRow []Field `json:"winning_row"`
+}
+
+// The two possible signs which can be placed on the board.
+type Sign string
+
+const (
+	SignNone Sign = "none"
+	SignX    Sign = "x"
+	SignO    Sign = "o"
+)
+
+// One of the nine fields on the board.
+type Field struct {
+	Row    int  `json:"row"`
+	Column int  `json:"column"`
+	Sign   Sign `json:"sign"`
+}
+
+type GameConfig struct {
 }

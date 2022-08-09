@@ -1,4 +1,4 @@
-package tictactoe
+package tictactoesimple
 
 import (
 	"fmt"
@@ -7,7 +7,8 @@ import (
 )
 
 type Game struct {
-	cg *cg.Game
+	cg     *cg.Game
+	config GameConfig
 
 	crossPlayer  *cg.Player
 	circlePlayer *cg.Player
@@ -16,13 +17,13 @@ type Game struct {
 	board [][]Field
 }
 
-func NewGame(cgGame *cg.Game) *Game {
+func NewGame(cgGame *cg.Game, config GameConfig) *Game {
 	game := &Game{
 		cg:          cgGame,
+		config:      config,
 		currentTurn: SignO,
 	}
 
-	cgGame.OnPlayerJoined = game.onPlayerJoined
 	cgGame.OnPlayerLeft = game.onPlayerLeft
 	cgGame.OnPlayerSocketConnected = game.onPlayerSocketConnected
 
@@ -43,20 +44,11 @@ func NewGame(cgGame *cg.Game) *Game {
 
 func (g *Game) Run() {
 	for g.cg.Running() {
-		event, ok := g.cg.WaitForNextEvent()
+		cmd, ok := g.cg.WaitForNextCommand()
 		if !ok {
 			break
 		}
-		g.handleEvent(event.Player, event.Event)
-	}
-}
-
-func (g *Game) onPlayerJoined(player *cg.Player) {
-	if g.crossPlayer == nil {
-		g.crossPlayer = player
-	} else {
-		g.circlePlayer = player
-		g.start()
+		g.handleCommand(cmd.Origin, cmd.Cmd)
 	}
 }
 
@@ -64,63 +56,64 @@ func (g *Game) onPlayerLeft(player *cg.Player) {
 	g.cg.Close()
 }
 
-func (g *Game) onPlayerSocketConnected(player *cg.Player, socket *cg.Socket) {
-	if g.crossPlayer == nil || g.circlePlayer == nil {
+func (g *Game) onPlayerSocketConnected(player *cg.Player, socket *cg.GameSocket) {
+	if g.crossPlayer == nil {
+		g.crossPlayer = player
+		return
+	} else if g.circlePlayer == nil {
+		g.circlePlayer = player
+		g.start()
 		return
 	}
 
-	socket.Send("server", StartEvent, StartEventData{
+	socket.Send(StartEvent, StartEventData{
 		Signs: map[string]Sign{
 			g.crossPlayer.Id:  SignX,
 			g.circlePlayer.Id: SignO,
 		},
 	})
 
-	socket.Send("server", BoardEvent, BoardEventData{
+	socket.Send(BoardEvent, BoardEventData{
 		Board: g.board,
 	})
 
-	socket.Send("server", TurnEvent, TurnEventData{
+	socket.Send(TurnEvent, TurnEventData{
 		Sign: g.currentTurn,
 	})
 }
 
-func (g *Game) handleEvent(player *cg.Player, event cg.Event) {
-	switch event.Name {
-	case MarkEvent:
-		g.mark(player, event)
+func (g *Game) handleCommand(origin *cg.Player, cmd cg.Command) {
+	switch cmd.Name {
+	case MarkCmd:
+		g.mark(origin, cmd)
 	default:
-		player.Send(player.Id, cg.ErrorEvent, cg.ErrorEventData{
-			Message: fmt.Sprintf("unexpected event: %s", event.Name),
-		})
+		origin.Log.ErrorData(cmd, fmt.Sprintf("unexpected command: %s", cmd.Name))
 	}
 }
 
-func (g *Game) mark(player *cg.Player, event cg.Event) {
+func (g *Game) mark(player *cg.Player, cmd cg.Command) {
 	if (g.currentTurn == SignX && player != g.crossPlayer) || (g.currentTurn == SignO && player != g.circlePlayer) {
-		player.Send("server", InvalidActionEvent, InvalidActionEventData{
+		player.Send(InvalidActionEvent, InvalidActionEventData{
 			Message: "It is not your turn.",
 		})
 		return
 	}
 
-	var data MarkEventData
-	err := event.UnmarshalData(&data)
+	var data MarkCmdData
+	err := cmd.UnmarshalData(&data)
 	if err != nil {
-		player.Send("server", cg.ErrorEvent, cg.ErrorEventData{
-			Message: "invalid event data",
-		})
+		player.Log.ErrorData(cmd, "invalid event data")
 		return
 	}
 	if data.Row < 0 || data.Row > 2 || data.Column < 0 || data.Column > 2 {
-		player.Send("server", InvalidActionEvent, InvalidActionEventData{
+		player.Send(InvalidActionEvent, InvalidActionEventData{
 			Message: "Invalid coordinates.",
 		})
 		return
 	}
 
 	if g.board[data.Row][data.Column].Sign != SignNone {
-		player.Send("server", InvalidActionEvent, InvalidActionEventData{
+		player.Send(InvalidActionEvent, InvalidActionEventData{
 			Message: "The field is alread occupied.",
 		})
 		return
@@ -140,7 +133,7 @@ func (g *Game) mark(player *cg.Player, event cg.Event) {
 }
 
 func (g *Game) start() {
-	g.cg.Send("server", StartEvent, StartEventData{
+	g.cg.Send(StartEvent, StartEventData{
 		Signs: map[string]Sign{
 			g.crossPlayer.Id:  SignX,
 			g.circlePlayer.Id: SignO,
@@ -156,13 +149,13 @@ func (g *Game) turn() {
 	} else {
 		g.currentTurn = SignX
 	}
-	g.cg.Send("server", TurnEvent, TurnEventData{
+	g.cg.Send(TurnEvent, TurnEventData{
 		Sign: g.currentTurn,
 	})
 }
 
 func (g *Game) sendBoard() {
-	g.cg.Send("server", BoardEvent, BoardEventData{
+	g.cg.Send(BoardEvent, BoardEventData{
 		Board: g.board,
 	})
 }
@@ -204,11 +197,11 @@ func (g *Game) checkDone() bool {
 
 func (g *Game) gameOver(tie bool, fields []Field) {
 	if tie {
-		g.cg.Send("server", GameOverEvent, GameOverEventData{
+		g.cg.Send(GameOverEvent, GameOverEventData{
 			Tie: true,
 		})
 	} else {
-		g.cg.Send("server", GameOverEvent, GameOverEventData{
+		g.cg.Send(GameOverEvent, GameOverEventData{
 			WinnerSign: fields[0].Sign,
 			WinningRow: fields,
 		})

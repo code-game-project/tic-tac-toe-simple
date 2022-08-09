@@ -1,7 +1,6 @@
 # Tic-Tac-Toe Simple
-![CodeGame Version](https://img.shields.io/badge/CodeGame-v0.6-orange)
-![CodeGame GameServer Version](https://img.shields.io/badge/GameServer-v0.1-yellow)
-![CGE Version](https://img.shields.io/badge/CGE-v0.3-green)
+![CodeGame Version](https://img.shields.io/badge/CodeGame-v0.7-orange)
+![CGE Version](https://img.shields.io/badge/CGE-v0.4-green)
 
 A simple implementation of [tic-tac-toe](https://en.wikipedia.org/wiki/Tic-tac-toe) for [CodeGame](https://code-game.org).
 
@@ -31,10 +30,10 @@ Prerequisites:
 
 ```sh
 # Download image
-docker pull codegameproject/tic-tac-toe-simple:0.2
+docker pull codegameproject/tic-tac-toe-simple:0.3
 
 # Run container
-docker run -d -p <port-on-host-machine>:8080 --name tic-tac-toe-simple codegameproject/tic-tac-toe-simple:0.2
+docker run -d --restart on-failure -p <port-on-host-machine>:8080 --name tic-tac-toe-simple codegameproject/tic-tac-toe-simple:0.3
 ```
 
 ## Event Flow

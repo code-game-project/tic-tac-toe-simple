@@ -1,28 +1,16 @@
 name tic_tac_toe_simple
-version 0.3
+version 0.4
 
-// The two possible signs which can be placed on the board.
-enum sign {
-	none, x, o
-}
-
-// One of the nine fields on the board.
-type field {
+// The 'mark' command can be sent to the server to mark a field with the player's sign.
+command mark {
 	row: int,
-	column: int,
-	sign: sign
+	column: int
 }
 
 // The 'start' event is sent to all players when the game starts.
 event start {
 	// A map of player IDs mapped to their respective signs.
 	signs: map<sign>,
-}
-
-// The 'mark' event can be sent to the server to mark a field with the player's sign.
-event mark {
-	row: int,
-	column: int
 }
 
 // The 'board' event is sent to all players when the board changes.
@@ -51,4 +39,16 @@ event game_over {
 	winner_sign: sign,
 	// The three fields which form a row.
 	winning_row: list<field>
+}
+
+// The two possible signs which can be placed on the board.
+enum sign {
+	none, x, o
+}
+
+// One of the nine fields on the board.
+type field {
+	row: int,
+	column: int,
+	sign: sign
 }

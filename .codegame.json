@@ -1,0 +1,5 @@
+{
+  "game": "tic-tac-toe-simple",
+  "type": "server",
+  "lang": "go"
+}
