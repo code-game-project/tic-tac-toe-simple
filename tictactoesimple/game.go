@@ -61,8 +61,10 @@ func (g *Game) onPlayerSocketConnected(player *cg.Player, socket *cg.GameSocket)
 		g.crossPlayer = player
 		return
 	} else if g.circlePlayer == nil {
-		g.circlePlayer = player
-		g.start()
+		if g.crossPlayer != player {
+			g.circlePlayer = player
+			g.start()
+		}
 		return
 	}
 
