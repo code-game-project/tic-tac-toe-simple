@@ -41,9 +41,9 @@ docker run -d --restart on-failure -p <port-on-host-machine>:8080 --name tic-tac
 1. You receive a `start` event when a second player joins, which includes your sign ('x' or 'o').
 2. You regularly receive a `board` event, which includes the current state of the board.
 3. You receive a `turn` event, which includes the next sign to be placed.
-4. When it is your turn, you can send a `mark` event with the row and the columnn (zero based), which should be marked with your sign.
-5. When the game is complete, you will receive a `game_over` event, which includes which player wins and which fields form the winning row. Otherwise go to *3.*
-6. Should you at any point send an invalid action, you will receive an `invalid_action` event.
+4. When it is your turn you can send a `mark` event with the row and the columnn (zero based), which should be marked with your sign.
+5. When the game is complete you will receive a `game_over` event, which includes which player wins and which fields form the winning row. Otherwise go to *3.*
+6. You will receive an `invalid_action` event when you try to do something that's not allowed like marking an already marked field.
 
 ## Building
 
@@ -54,12 +54,12 @@ docker run -d --restart on-failure -p <port-on-host-machine>:8080 --name tic-tac
 ```sh
 git clone https://github.com/code-game-project/tic-tac-toe-simple.git
 cd tic-tac-toe-simple
-go build .
+codegame build
 ```
 
 ## License
 
-Copyright (C) 2022 Julian Hofmann
+Copyright (C) 2022-2023 Julian Hofmann
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published
